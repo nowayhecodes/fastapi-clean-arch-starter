@@ -1,7 +1,9 @@
-from typing import Any, Dict, Generic, List, Optional, Type, TypeVar, Union
+from typing import Any, Generic, TypeVar
+
 from fastapi.encoders import jsonable_encoder
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
+
 from src.shared.domain.base import Base
 from src.shared.domain.repository import Repository
 
@@ -9,16 +11,19 @@ ModelType = TypeVar("ModelType", bound=Base)
 CreateSchemaType = TypeVar("CreateSchemaType", bound=BaseModel)
 UpdateSchemaType = TypeVar("UpdateSchemaType", bound=BaseModel)
 
-class CRUDRepository(Repository[ModelType], Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
-    def __init__(self, model: Type[ModelType]):
+
+class CRUDRepository(
+    Repository[ModelType], Generic[ModelType, CreateSchemaType, UpdateSchemaType]
+):
+    def __init__(self, model: type[ModelType]):
         self.model = model
 
-    def get(self, db: Session, id: Any) -> Optional[ModelType]:
+    def get(self, db: Session, id: Any) -> ModelType | None:
         return db.query(self.model).filter(self.model.id == id).first()
 
     def get_multi(
         self, db: Session, *, skip: int = 0, limit: int = 100
-    ) -> List[ModelType]:
+    ) -> list[ModelType]:
         return db.query(self.model).offset(skip).limit(limit).all()
 
     def create(self, db: Session, *, obj_in: CreateSchemaType) -> ModelType:
@@ -34,7 +39,7 @@ class CRUDRepository(Repository[ModelType], Generic[ModelType, CreateSchemaType,
         db: Session,
         *,
         db_obj: ModelType,
-        obj_in: Union[UpdateSchemaType, Dict[str, Any]]
+        obj_in: UpdateSchemaType | dict[str, Any],
     ) -> ModelType:
         obj_data = jsonable_encoder(db_obj)
         if isinstance(obj_in, dict):
@@ -53,4 +58,4 @@ class CRUDRepository(Repository[ModelType], Generic[ModelType, CreateSchemaType,
         obj = db.query(self.model).get(id)
         db.delete(obj)
         db.commit()
-        return obj 
+        return obj

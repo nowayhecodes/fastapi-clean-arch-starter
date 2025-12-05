@@ -1,4 +1,5 @@
 from celery import Celery
+
 from src.shared.infra.config import settings
 
 celery_app = Celery(
@@ -21,4 +22,4 @@ celery_app.conf.update(
     task_time_limit=30 * 60,
     worker_max_tasks_per_child=200,
     broker_connection_retry_on_startup=True,
-) 
+)

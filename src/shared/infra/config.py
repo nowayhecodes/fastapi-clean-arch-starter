@@ -1,6 +1,8 @@
-from typing import List
+from typing import Any
+
+from pydantic import AnyHttpUrl, field_validator
 from pydantic_settings import BaseSettings
-from pydantic import AnyHttpUrl, validator
+
 
 class Settings(BaseSettings):
     APP_NAME: str
@@ -8,15 +10,14 @@ class Settings(BaseSettings):
     DEBUG: bool
     API_V1_STR: str = "/api/v1"
     PROJECT_NAME: str
-    BACKEND_CORS_ORIGINS: List[AnyHttpUrl] = []
+    BACKEND_CORS_ORIGINS: list[AnyHttpUrl] = []
 
-    @validator("BACKEND_CORS_ORIGINS", pre=True)
-    def assemble_cors_origins(cls, v: str | List[str]) -> List[str] | str:
+    @field_validator("BACKEND_CORS_ORIGINS", pre=True)
+    def assemble_cors_origins(cls, v: str | list[str]) -> list[str] | str:
         if isinstance(v, str) and not v.startswith("["):
             return [i.strip() for i in v.split(",")]
         elif isinstance(v, (list, str)):
             return v
-        raise ValueError(v)
 
     # Security
     SECRET_KEY: str
@@ -31,8 +32,8 @@ class Settings(BaseSettings):
     POSTGRES_DB: str
     SQLALCHEMY_DATABASE_URI: str | None = None
 
-    @validator("SQLALCHEMY_DATABASE_URI", pre=True)
-    def assemble_db_connection(cls, v: str | None, values: dict[str, any]) -> str:
+    @field_validator("SQLALCHEMY_DATABASE_URI", pre=True)
+    def assemble_db_connection(cls, v: str | None, values: dict[str, Any]) -> str:
         if isinstance(v, str):
             return v
         return f"postgresql://{values.get('POSTGRES_USER')}:{values.get('POSTGRES_PASSWORD')}@{values.get('POSTGRES_SERVER')}/{values.get('POSTGRES_DB')}"
@@ -59,4 +60,5 @@ class Settings(BaseSettings):
         case_sensitive = True
         env_file = ".env"
 
-settings = Settings() 
+
+settings = Settings()

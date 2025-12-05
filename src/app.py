@@ -1,8 +1,20 @@
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+
 from src.shared.infra.config import settings
-from src.shared.infra.database import Base, engine
+from src.shared.infra.database import init_db
 from src.shared.presentation.api.v1.api import api_router
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup: Create database tables
+    await init_db()
+    yield
+    # Shutdown: Add any cleanup code here if needed
+
 
 def create_application() -> FastAPI:
     application = FastAPI(
@@ -10,6 +22,7 @@ def create_application() -> FastAPI:
         openapi_url=f"{settings.API_V1_STR}/openapi.json",
         docs_url=f"{settings.API_V1_STR}/docs",
         redoc_url=f"{settings.API_V1_STR}/redoc",
+        lifespan=lifespan,
     )
 
     # Set up CORS middleware
@@ -26,9 +39,5 @@ def create_application() -> FastAPI:
 
     return application
 
-app = create_application()
 
-@app.on_event("startup")
-async def startup_event():
-    # Create database tables
-    Base.metadata.create_all(bind=engine) 
+app = create_application()

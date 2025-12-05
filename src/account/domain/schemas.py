@@ -1,17 +1,20 @@
 from pydantic import BaseModel, EmailStr
-from typing import Optional
+
 
 class AccountBase(BaseModel):
     email: EmailStr
-    full_name: Optional[str] = None
-    is_active: Optional[bool] = True
+    full_name: str | None = None
+    is_active: bool | None = True
     is_superuser: bool = False
+
 
 class AccountCreate(AccountBase):
     password: str
 
+
 class AccountUpdate(AccountBase):
-    password: Optional[str] = None
+    password: str | None = None
+
 
 class AccountInDBBase(AccountBase):
     id: int
@@ -19,8 +22,10 @@ class AccountInDBBase(AccountBase):
     class Config:
         from_attributes = True
 
+
 class Account(AccountInDBBase):
     pass
 
+
 class AccountInDB(AccountInDBBase):
-    hashed_password: str 
+    hashed_password: str

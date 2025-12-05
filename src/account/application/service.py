@@ -1,4 +1,3 @@
-
 from sqlalchemy.orm import Session
 
 from src.account.domain.models import Account
@@ -15,4 +14,4 @@ class AccountService(CRUDService[Account, AccountCreate, AccountUpdate]):
         return self.repository.get_by_email(db, email=email)
 
     def authenticate(self, db: Session, *, email: str, password: str) -> Account | None:
-        return self.repository.authenticate(db, email=email, password=password) 
+        return self.repository.authenticate(db, email=email, password=password)

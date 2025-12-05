@@ -6,7 +6,6 @@ from sqlalchemy.pool import StaticPool
 
 from src.app import app
 from src.shared.infra.database import Base, get_db
-from src.shared.infra.config import settings
 
 SQLALCHEMY_DATABASE_URL = "sqlite:///:memory:"
 
@@ -17,6 +16,7 @@ engine = create_engine(
 )
 TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
+
 def override_get_db():
     try:
         db = TestingSessionLocal()
@@ -24,12 +24,14 @@ def override_get_db():
     finally:
         db.close()
 
+
 @pytest.fixture(scope="session")
 def test_app():
     Base.metadata.create_all(bind=engine)
     app.dependency_overrides[get_db] = override_get_db
     yield TestClient(app)
     Base.metadata.drop_all(bind=engine)
+
 
 @pytest.fixture(scope="function")
 def db_session():
@@ -39,4 +41,4 @@ def db_session():
     yield session
     session.close()
     transaction.rollback()
-    connection.close() 
+    connection.close()

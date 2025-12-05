@@ -1,7 +1,10 @@
-from typing import Any, Optional
 import json
-from redis import Redis, ConnectionPool
+from typing import Any
+
+from redis import ConnectionPool, Redis
+
 from src.shared.infra.config import settings
+
 
 class CacheManager:
     def __init__(self):
@@ -14,7 +17,7 @@ class CacheManager:
         )
         self.redis = Redis(connection_pool=self.pool)
 
-    async def get(self, key: str) -> Optional[Any]:
+    async def get(self, key: str) -> Any | None:
         value = self.redis.get(key)
         if value:
             return json.loads(value)
@@ -30,4 +33,5 @@ class CacheManager:
         for key in self.redis.scan_iter(pattern):
             self.redis.delete(key)
 
-cache_manager = CacheManager() 
+
+cache_manager = CacheManager()

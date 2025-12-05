@@ -1,17 +1,21 @@
-from pydantic import BaseModel
-from typing import Optional
 from datetime import datetime
+
+from pydantic import BaseModel
+
 
 class NotificationBase(BaseModel):
     title: str
     message: str
     account_id: int
 
+
 class NotificationCreate(NotificationBase):
     pass
 
+
 class NotificationUpdate(BaseModel):
-    is_read: Optional[bool] = None
+    is_read: bool | None = None
+
 
 class NotificationInDBBase(NotificationBase):
     id: int
@@ -22,5 +26,6 @@ class NotificationInDBBase(NotificationBase):
     class Config:
         from_attributes = True
 
+
 class Notification(NotificationInDBBase):
-    pass 
+    pass
