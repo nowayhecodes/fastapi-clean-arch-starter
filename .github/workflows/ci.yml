@@ -51,18 +51,20 @@ jobs:
         python -m pip install --upgrade pip
         pip install uv
         uv venv
+        source .venv/bin/activate
+        uv sync
         uv pip install -e .[test]
 
     - name: Lint with ruff
       run: |
-        ruff check .
-        ruff format --check .
+        uv run ruff check .
+        uv run ruff format --check .
 
     - name: Type check with mypy
-      run: mypy .
+      run: uv run mypy .
 
     - name: Test with pytest
-      run: pytest
+      run: uv run pytest
       env:
         POSTGRES_SERVER: localhost
         POSTGRES_USER: postgres
