@@ -16,7 +16,7 @@ def send_welcome_email(account_id: int):
             send_notification.delay(
                 account_id=account.id,
                 title="Welcome to FastAPI Clean Arch Starter",
-                message=f"Welcome {account.full_name}! We're glad to have you on board.",
+                message=f"Welcome {account.full_name}! We're glad to have you on board."
             )
     finally:
         db.close()
