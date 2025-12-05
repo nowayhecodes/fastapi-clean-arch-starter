@@ -1,0 +1,81 @@
+version: '3.8'
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    environment:
+      - APP_ENV=development
+      - DEBUG=True
+    depends_on:
+      - db
+      - redis
+    networks:
+      - python-api-network
+
+  db:
+    image: postgres:15
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=python-api-db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - python-api-network
+
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - python-api-network
+
+  celery:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: celery -A src.shared.infra.celery_app worker --loglevel=info
+    volumes:
+      - .:/app
+    environment:
+      - APP_ENV=development
+      - DEBUG=True
+    depends_on:
+      - redis
+      - db
+    networks:
+      - python-api-network
+
+  celery-beat:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: celery -A src.shared.infra.celery_app beat --loglevel=info
+    volumes:
+      - .:/app
+    environment:
+      - APP_ENV=development
+      - DEBUG=True
+    depends_on:
+      - redis
+      - db
+    networks:
+      - python-api-network
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  python-api-network:
+    driver: bridge 
