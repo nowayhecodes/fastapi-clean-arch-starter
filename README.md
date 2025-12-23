@@ -5,18 +5,19 @@ A clean architecture boilerplate for Python FastAPI backend APIs with enterprise
 ## 🚀 Features
 
 ### Core Architecture
-- Clean Architecture implementation
-- FastAPI for the web framework
-- SQLAlchemy for database ORM
-- PostgreSQL as the database
-- Redis for caching and message broker
-- Celery for background tasks
-- JWT authentication
-- Docker and Docker Compose for development
-- Pytest for testing
-- Type hints and mypy for type checking
-- Ruff for linting
-- UV for dependency management
+- **Clean Architecture** implementation with proper layer separation
+- **Dependency Injection** & Inversion of Control (IoC) following SOLID principles
+- **FastAPI** for the web framework with built-in DI system
+- **SQLAlchemy** for database ORM
+- **PostgreSQL** as the database
+- **Redis** for caching and message broker
+- **Celery** for background tasks
+- **JWT** authentication
+- **Docker** and Docker Compose for development
+- **Pytest** for testing with dependency mocking
+- **Type hints** and mypy for type checking
+- **Ruff** for linting
+- **UV** for dependency management
 
 ### 🏢 Multi-Tenant Support
 - **Schema-per-tenant isolation**: Complete data separation using PostgreSQL schemas
@@ -62,9 +63,8 @@ A clean architecture boilerplate for Python FastAPI backend APIs with enterprise
 
 ## 📚 Documentation
 
-- **[FEATURES_OVERVIEW.md](FEATURES_OVERVIEW.md)** - Quick overview of all features
-- **[IMPLEMENTATION_SUMMARY.md](IMPLEMENTATION_SUMMARY.md)** - Detailed implementation summary
 - **[SETUP_GUIDE.md](SETUP_GUIDE.md)** - Complete setup and configuration guide
+- **[DEPENDENCY_INJECTION.md](DEPENDENCY_INJECTION.md)** - Dependency injection & IoC patterns
 - **[src/logger/README.md](src/logger/README.md)** - Logger module documentation
 - **[src/compliance/README.md](src/compliance/README.md)** - Compliance features documentation
 
